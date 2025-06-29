@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logo2.svg";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import API_BASE_URL from "../../Context/Api";
 
 const LoginPage = ({ onLogin }) => {
   const theme = useTheme();
@@ -38,7 +39,7 @@ const LoginPage = ({ onLogin }) => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         first_name: username,
         password,
       });
