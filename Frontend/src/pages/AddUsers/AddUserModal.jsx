@@ -34,6 +34,7 @@ const AddUserModal = ({
   onUserAdded,
   mode = "add",
   userToEdit = null,
+  onError, // ✅ NEW
 }) => {
   const [formData, setFormData] = useState(initialForm);
   const [errors, setErrors] = useState({});
@@ -110,49 +111,51 @@ const AddUserModal = ({
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+  if (!validateForm()) return;
 
+  try {
+    const endpoint =
+      mode === "edit"
+        ? `${API_BASE_URL}/api/users/update/${formData.id}`
+        : `${API_BASE_URL}/api/users/add-users`;
+
+    const method = mode === "edit" ? "PUT" : "POST";
+
+    const payload = { ...formData };
+    delete payload.confirmPassword;
+    if (mode === "edit" && !payload.password) delete payload.password;
+
+    const res = await fetch(endpoint, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    let data = {};
     try {
-      const endpoint =
-        mode === "edit"
-          ? `${API_BASE_URL}/api/users/update/${formData.id}`
-          : `${API_BASE_URL}/api/users/add-users`;
-
-      const method = mode === "edit" ? "PUT" : "POST";
-
-      const payload = { ...formData };
-      delete payload.confirmPassword;
-      if (mode === "edit" && !payload.password) delete payload.password;
-
-      const res = await fetch(endpoint, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      let data = {};
-      try {
-        data = await res.json();
-      } catch (jsonErr) {
-        console.error("Failed to parse JSON:", jsonErr);
-      }
-
-      if (res.ok) {
-        onUserAdded();
-        handleClose();
-        setFormData(initialForm);
-        showSnackbar(data.message || "User saved successfully!", "success");
-      } else {
-        showSnackbar(
-          data.message || `Error ${res.status}: ${res.statusText}`,
-          "error"
-        );
-      }
-    } catch (err) {
-      console.error("Submit error:", err);
-      showSnackbar("Something went wrong", "error");
+      data = await res.json();
+    } catch (jsonErr) {
+      console.error("Failed to parse JSON:", jsonErr);
     }
-  };
+
+    if (res.ok) {
+      // ✅ Notify parent of success
+      onUserAdded();
+      handleClose();
+      setFormData(initialForm);
+    } else {
+      // ❌ Notify parent of backend error message
+      if (data.message) {
+        onError(data.message);
+      } else {
+        onError(`Error ${res.status}: ${res.statusText}`);
+      }
+    }
+  } catch (err) {
+    console.error("Submit error:", err);
+    onError("Something went wrong");
+  }
+};
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -394,6 +397,7 @@ const AddUserModal = ({
           </Button>
         </Box>
       </Box>
+      
     </Modal>
   );
 };

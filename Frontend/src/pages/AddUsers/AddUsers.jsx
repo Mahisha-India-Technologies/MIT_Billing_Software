@@ -431,24 +431,25 @@ const AddUsers = () => {
 
       {/* Add/Edit User Modal */}
       <AddUserModal
-        open={openModal}
-        handleClose={() => {
-          setOpenModal(false);
-          setSelectedUser(null);
-          setModalMode("add");
-        }}
-        onUserAdded={() => {
-          fetchUsers();
-          showSnackbar(
-            modalMode === "edit"
-              ? "User updated successfully"
-              : "User added successfully",
-            "success"
-          );
-        }}
-        mode={modalMode}
-        userToEdit={selectedUser}
-      />
+  open={openModal}
+  handleClose={() => {
+    setOpenModal(false);
+    setSelectedUser(null);
+    setModalMode("add");
+  }}
+  onUserAdded={() => {
+    fetchUsers();
+    showSnackbar(
+      modalMode === "edit"
+        ? "User updated successfully"
+        : "User added successfully",
+      "success"
+    );
+  }}
+  onError={(message) => showSnackbar(message, "error")} // ✅ NEW PROP
+  mode={modalMode}
+  userToEdit={selectedUser}
+/>
 
       <CompanyInfoModal
         open={openInfoModal}
