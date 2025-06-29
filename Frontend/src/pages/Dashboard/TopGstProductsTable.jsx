@@ -40,17 +40,17 @@ const TopGSTProductsTable = ({
     <Paper
       elevation={3}
       sx={{
-        borderRadius: 3,
         overflow: "hidden",
         border: `2px solid ${primaryColor}`,
         boxShadow: `0 0 10px ${primaryColor}66`,
+        borderRadius: 3,
       }}
     >
       <TableContainer
         sx={{
-          maxHeight: 420,
+          maxHeight: 430,
           overflowX: "auto",
-          "&::-webkit-scrollbar": { height: 6 },
+          "&::-webkit-scrollbar": { height: 6, width: '4px' },
           "&::-webkit-scrollbar-thumb": {
             backgroundColor: "#888",
             borderRadius: 4,

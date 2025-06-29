@@ -1488,7 +1488,7 @@ export default function GstInvoice() {
               ))}
 
               {/* Add Product Button (Mobile) */}
-              <Box textAlign="center" mt={2}>
+              <Box textAlign="center" mt={2} sx={{display: 'grid', gap: '10px'}}>
                 <Button
                   display="flex"
                   gap={2}
@@ -1518,7 +1518,6 @@ export default function GstInvoice() {
                   mb={2}
                   onClick={() => setSelectModalOpen(true)}
                   sx={{
-                    ml: "10px",
                     gap: "8px",
                     textTransform: "none",
                     color: primaryColor,
@@ -2923,10 +2922,11 @@ export default function GstInvoice() {
 
           <Grid
             sx={{
-              displlay: "flex",
+              display: "flex",
               gap: "10px",
               p: 0,
               textAlign: { xs: "center", sm: "right" },
+              justifyContent: 'flex-end',
             }}
           >
             <Button

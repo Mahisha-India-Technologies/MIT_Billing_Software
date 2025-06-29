@@ -135,6 +135,8 @@ const AppLayout = () => {
           marginLeft: `${marginLeft}px`,
           px: { xs: 1, sm: 2 },
           pb: 2,
+          display: 'block',
+          overflow: 'auto',
         }}
       >
         <Routes>

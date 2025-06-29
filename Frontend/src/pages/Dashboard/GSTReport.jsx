@@ -328,13 +328,11 @@ export default function Dashboard() {
         </Grid>
 
         {/* ✅ Scroll wrapper for wide table */}
-        <Box sx={{ overflowX: "auto", width: "100%" }}>
           <TopGSTProductsTable
             topProducts={topProducts}
             safeToFixed={safeToFixed}
             safeToLocaleString={safeToLocaleString}
           />
-        </Box>
       </Grid>
 
       <Grid
