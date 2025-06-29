@@ -1,0 +1,45 @@
+/* In App.css or a global MUI theme override */
+body {
+  overflow-x: hidden;
+}
+
+
+/* ::-webkit-scrollbar {
+  width: 6px; 
+}
+
+::-webkit-scrollbar-track {
+  background: #908e8d;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #908e8d, #908e8d);
+  border-radius: 10px;
+  transition: background 0.3s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #908e8d, #908e8d);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+* {
+  scrollbar-width: thin; 
+  scrollbar-color: #908e8d #f1f1f1; 
+}
+
+::selection {
+  background: #908e8d; 
+  color: #ffffff; 
+}
+
+::-moz-selection {
+  background: #908e8d;
+  color: #ffffff;
+} */
+
+
