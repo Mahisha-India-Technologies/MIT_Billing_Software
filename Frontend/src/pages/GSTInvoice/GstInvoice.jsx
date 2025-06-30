@@ -1079,288 +1079,171 @@ export default function GstInvoice() {
                     />
                   </IconButton>
                   <Grid container spacing={1} sx={{ display: "grid" }}>
+                    {/* Particular Field */}
                     <Grid item xs={12}>
-                      <ClickAwayListener
-                        onClickAway={() => {
-                          setMobileAnchorEl(null);
-                          setSearch("");
+                      <Tooltip
+                        title={row.particular || "No product selected"}
+                        placement="top"
+                        arrow
+                        enterDelay={300}
+                        leaveDelay={200}
+                        componentsProps={{
+                          tooltip: {
+                            sx: {
+                              backgroundColor: isDark ? "#444" : "#333",
+                              color: "#fff",
+                              fontSize: "0.85rem",
+                              borderRadius: 1,
+                              px: 1.5,
+                              py: 1,
+                              boxShadow: 3,
+                              maxWidth: 240,
+                            },
+                          },
+                          arrow: {
+                            sx: {
+                              color: isDark ? "#444" : "#333",
+                            },
+                          },
                         }}
                       >
-                        <Box>
-                          <Tooltip
-                            title={row.particular || "No product selected"}
-                            placement="top"
-                            arrow
-                            enterDelay={300}
-                            leaveDelay={200}
-                            componentsProps={{
-                              tooltip: {
-                                sx: {
-                                  backgroundColor: isDark ? "#444" : "#333",
-                                  color: "#fff",
-                                  fontSize: "0.85rem",
-                                  borderRadius: 1,
-                                  px: 1.5,
-                                  py: 1,
-                                  boxShadow: 3,
-                                  maxWidth: 240,
-                                },
-                              },
-                              arrow: {
-                                sx: {
-                                  color: isDark ? "#444" : "#333",
-                                },
-                              },
-                            }}
-                          >
-                            <TextField
-                              fullWidth
-                              label="Particular"
-                              value={row.particular}
-                              onClick={(e) => {
-                                setMobileAnchorEl(e.currentTarget);
-                                setTimeout(
-                                  () => inputRef.current?.focus(),
-                                  100
-                                );
-                              }}
-                              inputProps={{ readOnly: true }}
-                              sx={{
-                                minWidth: "200px",
-                                maxWidth: "100%",
-                                cursor: "pointer",
-                                "& .MuiInputBase-root": {
-                                  backgroundColor: isDark ? "#2b2b2b" : "#fff",
-                                  color: isDark ? "#fff" : "#000",
-                                  borderRadius: 1,
-                                  paddingRight: "36px !important",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                },
-                                "& .MuiInputBase-input": {
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  cursor: "pointer",
-                                },
-                                "& label.Mui-focused": {
-                                  color: primaryColor,
-                                },
-                                "& .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: isDark ? "#555" : "#ccc",
-                                },
-                                "&:hover .MuiOutlinedInput-notchedOutline": {
-                                  borderColor: primaryColor,
-                                },
-                                "& .MuiSvgIcon-root": {
-                                  color: isDark ? "#e0f7fa" : "#888",
-                                },
-                                "& .MuiInputLabel-root": {
-                                  color: isDark ? "#aaa" : "#555",
-                                },
-                              }}
-                              InputProps={{
-                                endAdornment: (
-                                  <KeyboardArrowDownIcon
-                                    sx={{
-                                      position: "absolute",
-                                      right: 8,
-                                      top: "50%",
-                                      fontSize: "18px",
-                                      transform: "translateY(-50%)",
-                                      color: isDark ? "#aaa" : "#666",
-                                      pointerEvents: "none",
-                                    }}
-                                  />
-                                ),
-                              }}
-                            />
-                          </Tooltip>
-
-                          <Popper
-                            open={Boolean(mobileAnchorEl)}
-                            anchorEl={mobileAnchorEl}
-                            placement="bottom-start"
-                            style={{ zIndex: 1300 }}
-                            modifiers={[
+                        <TextField
+                          select
+                          fullWidth
+                          label="Particular"
+                          value={row.particular}
+                          onChange={(e) =>
+                            handleProductChange(
+                              index,
+                              "particular",
+                              e.target.value
+                            )
+                          }
+                          sx={{
+                            minWidth: "200px",
+                            "& .MuiInputBase-root": {
+                              backgroundColor: isDark ? "#2b2b2b" : "#ffffff",
+                              color: isDark ? "#fff" : "#000",
+                            },
+                            "& label.Mui-focused": {
+                              color: primaryColor,
+                            },
+                            "& .MuiInputLabel-root": {
+                              color: isDark ? "#aaa" : "#555",
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: isDark ? "#555" : "#ccc",
+                            },
+                            "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
                               {
-                                name: "offset",
-                                options: { offset: [20, -200] },
+                                borderColor: primaryColor,
                               },
-                            ]}
-                          >
-                            <Fade in={Boolean(mobileAnchorEl)} timeout={200}>
-                              <Paper
-                                sx={{
-                                  width: "92vw",
-                                  maxWidth: 360,
+                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                              {
+                                borderColor: primaryColor,
+                              },
+                            "& svg": {
+                              color: isDark ? "#e0f7fa" : "gray",
+                            },
+                          }}
+                          SelectProps={{
+                            renderValue: (selected) => selected,
+                            MenuProps: {
+                              PaperProps: {
+                                sx: {
                                   maxHeight: 480,
                                   backgroundColor: isDark ? "#1e1e1e" : "#fff",
                                   border: `1px solid ${primaryColor}`,
-                                  borderRadius: 0,
-                                  mt: 1,
-                                  boxShadow: `0 0 8px ${primaryColor}, 0 0 6px ${primaryColor}`,
-                                  display: "flex",
-                                  flexDirection: "column",
-                                }}
-                              >
-                                {/* Search Bar */}
-                                <Box
-                                  sx={{
-                                    flexShrink: 0,
-                                    display: "flex",
-                                    alignItems: "center",
+                                  borderRadius: "4px",
+                                  "& .MuiMenuItem-root": {
                                     px: 1.5,
-                                    py: 0.5,
-                                    m: 1,
-                                    borderRadius: 2,
-                                    border: `2px solid ${primaryColor}`,
-                                    backgroundColor: isDark
-                                      ? "#2a2a2a"
-                                      : "#f9f9f9",
-                                  }}
-                                >
-                                  <SearchIcon
-                                    fontSize="small"
-                                    sx={{ mr: 1, color: primaryColor }}
-                                  />
-                                  <InputBase
-                                    inputRef={inputRef}
-                                    placeholder="Search products..."
-                                    fullWidth
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    sx={{
-                                      fontSize: "0.85rem",
-                                      color: isDark ? "#fff" : "#000",
-                                    }}
-                                  />
-                                </Box>
-
-                                {/* Filtered List */}
-                                <Box
-                                  sx={{
-                                    flexGrow: 1,
-                                    overflowY: "auto",
-                                    overflowX: "hidden",
-                                    "&::-webkit-scrollbar": {
-                                      width: "3px",
+                                    py: 0.75,
+                                    fontSize: "0.85rem",
+                                    color: isDark ? "#e0f7fa" : "#000",
+                                    minHeight: "unset",
+                                    alignItems: "start",
+                                    "&:hover": {
+                                      backgroundColor: isDark
+                                        ? "#494e4e"
+                                        : "#f0f0f0",
                                     },
-                                    "&::-webkit-scrollbar-thumb": {
+                                    "&.Mui-selected": {
                                       backgroundColor: primaryColor,
+                                      color: "#fff",
+                                      "&:hover": {
+                                        backgroundColor: primaryColor,
+                                      },
                                     },
-                                    scrollbarWidth: "thin",
-                                    scrollbarColor: `${primaryColor} transparent`,
-                                  }}
+                                  },
+                                  "&::-webkit-scrollbar": {
+                                    width: "6px",
+                                  },
+                                  "&::-webkit-scrollbar-thumb": {
+                                    backgroundColor: primaryColor,
+                                    borderRadius: "6px",
+                                  },
+                                },
+                              },
+                            },
+                          }}
+                        >
+                          {productList.map((product) => (
+                            <MenuItem
+                              key={product.product_id}
+                              value={product.product_name}
+                              disabled={product.stock_quantity === 0}
+                              sx={{
+                                opacity: product.stock_quantity === 0 ? 0.5 : 1,
+                                fontStyle:
+                                  product.stock_quantity === 0
+                                    ? "italic"
+                                    : "normal",
+                                color:
+                                  product.stock_quantity === 0
+                                    ? "gray"
+                                    : "inherit",
+                                pointerEvents:
+                                  product.stock_quantity === 0
+                                    ? "none"
+                                    : "auto",
+                              }}
+                            >
+                              <Box display="flex" flexDirection="column">
+                                <Typography
+                                  fontWeight={900}
+                                  fontSize="0.85rem"
+                                  noWrap
                                 >
-                                  {filteredProducts.length > 0 ? (
-                                    filteredProducts.map((product) => {
-                                      const isSelected =
-                                        product.product_name === row.particular;
-                                      return (
-                                        <MenuItem
-                                          key={product.product_id}
-                                          onClick={() => {
-                                            handleProductChange(
-                                              index,
-                                              "particular",
-                                              product.product_name
-                                            );
-                                            setMobileAnchorEl(null);
-                                            setSearch("");
-                                          }}
-                                          disabled={
-                                            product.stock_quantity === 0
-                                          }
-                                          sx={{
-                                            alignItems: "start",
-                                            px: 1.5,
-                                            py: 1,
-                                            fontSize: "0.85rem",
-                                            backgroundColor: isSelected
-                                              ? isDark
-                                                ? "#2d4c57"
-                                                : "#daf7d8"
-                                              : "transparent",
-                                            fontWeight: "bold",
-                                            opacity:
-                                              product.stock_quantity === 0
-                                                ? 0.5
-                                                : 1,
-                                            fontStyle:
-                                              product.stock_quantity === 0
-                                                ? "italic"
-                                                : "normal",
-                                            color:
-                                              product.stock_quantity === 0
-                                                ? "gray"
-                                                : isDark
-                                                ? "#e0f7fa"
-                                                : "#333",
-                                            "&:hover": {
-                                              backgroundColor: isDark
-                                                ? "#494e4e"
-                                                : "#f0f0f0",
-                                            },
-                                          }}
-                                        >
-                                          <Box>
-                                            <Typography
-                                              fontWeight={900}
-                                              fontSize="0.85rem"
-                                              noWrap
-                                            >
-                                              {product.product_name}
-                                              {product.stock_quantity === 0 && (
-                                                <Typography
-                                                  component="span"
-                                                  sx={{
-                                                    fontWeight: "normal",
-                                                    fontSize: "0.7rem",
-                                                    color: "red",
-                                                    ml: 1,
-                                                  }}
-                                                >
-                                                  (Out of stock)
-                                                </Typography>
-                                              )}
-                                            </Typography>
-                                            <Typography
-                                              variant="caption"
-                                              fontSize="0.7rem"
-                                              color={
-                                                isDark ? "#d8dcdc" : "gray"
-                                              }
-                                              noWrap
-                                            >
-                                              ID: {product.product_id} | HSN:{" "}
-                                              {product.hsn_code} | Stock:{" "}
-                                              {product.stock_quantity} | Price:
-                                              ₹{product.discount_price}
-                                            </Typography>
-                                          </Box>
-                                        </MenuItem>
-                                      );
-                                    })
-                                  ) : (
-                                    <MenuItem
-                                      disabled
+                                  {product.product_name}
+                                  {product.stock_quantity === 0 && (
+                                    <Typography
+                                      component="span"
                                       sx={{
-                                        fontStyle: "italic",
-                                        fontSize: "0.85rem",
-                                        opacity: 0.7,
+                                        fontWeight: "normal",
+                                        fontSize: "0.7rem",
+                                        color: "red",
+                                        ml: 1,
                                       }}
                                     >
-                                      No matching products
-                                    </MenuItem>
+                                      (Out of stock)
+                                    </Typography>
                                   )}
-                                </Box>
-                              </Paper>
-                            </Fade>
-                          </Popper>
-                        </Box>
-                      </ClickAwayListener>
+                                </Typography>
+                                <Typography
+                                  variant="caption"
+                                  fontSize="0.7rem"
+                                  color={isDark ? "#aaa" : "gray"}
+                                >
+                                  ID: {product.product_id} | HSN:{" "}
+                                  {product.hsn_code} | Stock:{" "}
+                                  {product.stock_quantity} | Price: ₹
+                                  {product.discount_price}
+                                </Typography>
+                              </Box>
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </Tooltip>
                     </Grid>
 
                     {/* Disabled Fields */}
@@ -1383,39 +1266,46 @@ export default function GstInvoice() {
                       ];
                       return (
                         <Grid item xs={12} key={i}>
-  <TextField
-    label={label}
-    fullWidth
-    value={row[keys[i]]}
-    disabled
-    variant="outlined"
-    sx={{
-      "& .MuiInputBase-root": {
-        backgroundColor: isDark ? "#2b2b2b" : "#f5f5f5",
-        color: isDark ? "#fff" : "#000",
-        borderRadius: 1,
-      },
-      "& .Mui-disabled": {
-        WebkitTextFillColor: isDark ? "#aaa" : "#595a59", // Normal disabled color
-      },
-      "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: isDark ? "#555" : "#ccc",
-      },
-      "& .MuiInputLabel-root": {
-        color: isDark ? "#aaa" : "#555",
-      },
+                          <TextField
+                            label={label}
+                            fullWidth
+                            value={row[keys[i]]}
+                            disabled
+                            variant="outlined"
+                            sx={{
+                              "& .MuiInputBase-root": {
+                                backgroundColor: isDark ? "#2b2b2b" : "#f5f5f5",
+                                color: isDark ? "#fff" : "#000",
+                                borderRadius: 1,
+                              },
+                              "& .Mui-disabled": {
+                                WebkitTextFillColor: isDark
+                                  ? "#aaa"
+                                  : "#595a59", // Normal disabled color
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: isDark ? "#555" : "#ccc",
+                              },
+                              "& .MuiInputLabel-root": {
+                                color: isDark ? "#aaa" : "#555",
+                              },
 
-      // Autofill override styles
-      "& input:-webkit-autofill": {
-        WebkitBoxShadow: `0 0 0 100px ${isDark ? "#2b2b2b" : "#f5f5f5"} inset`,
-        WebkitTextFillColor: isDark ? "#aaa" : "#595a59",
-        caretColor: isDark ? "#aaa" : "#595a59",
-        borderRadius: 1,
-        transition: "background-color 5000s ease-in-out 0s",
-      },
-    }}
-  />
-</Grid>
+                              // Autofill override styles
+                              "& input:-webkit-autofill": {
+                                WebkitBoxShadow: `0 0 0 100px ${
+                                  isDark ? "#2b2b2b" : "#f5f5f5"
+                                } inset`,
+                                WebkitTextFillColor: isDark
+                                  ? "#aaa"
+                                  : "#595a59",
+                                caretColor: isDark ? "#aaa" : "#595a59",
+                                borderRadius: 1,
+                                transition:
+                                  "background-color 5000s ease-in-out 0s",
+                              },
+                            }}
+                          />
+                        </Grid>
                       );
                     })}
 
@@ -1495,7 +1385,11 @@ export default function GstInvoice() {
               ))}
 
               {/* Add Product Button (Mobile) */}
-              <Box textAlign="center" mt={2} sx={{display: 'grid', gap: '10px'}}>
+              <Box
+                textAlign="center"
+                mt={2}
+                sx={{ display: "grid", gap: "10px" }}
+              >
                 <Button
                   display="flex"
                   gap={2}
@@ -1597,294 +1491,172 @@ export default function GstInvoice() {
                       {/* Particular Field */}
 
                       <TableCell sx={{ px: 1, py: 2 }}>
-                        <ClickAwayListener
-                          onClickAway={() => {
-                            setAnchorEl(null);
-                            setSearch("");
+                        <Tooltip
+                          title={
+                            row.particular
+                              ? row.particular
+                              : "No product selected"
+                          }
+                          placement="top"
+                          arrow
+                          enterDelay={300}
+                          leaveDelay={200}
+                          componentsProps={{
+                            tooltip: {
+                              sx: {
+                                backgroundColor: isDark ? "#444" : "#333",
+                                color: "#fff",
+                                fontSize: "0.85rem",
+                                borderRadius: 1,
+                                px: 1.5,
+                                py: 1,
+                                boxShadow: 3,
+                                maxWidth: 240,
+                              },
+                            },
+                            arrow: {
+                              sx: {
+                                color: isDark ? "#444" : "#333",
+                              },
+                            },
                           }}
                         >
-                          <Box>
-                            <Tooltip
-                              title={row.particular || "No product selected"}
-                              placement="top"
-                              arrow
-                              enterDelay={300}
-                              leaveDelay={200}
-                              componentsProps={{
-                                tooltip: {
-                                  sx: {
-                                    backgroundColor: isDark ? "#444" : "#333",
-                                    color: "#fff",
-                                    fontSize: "0.85rem",
-                                    borderRadius: 1,
-                                    px: 1.5,
-                                    py: 1,
-                                    boxShadow: 3,
-                                    maxWidth: 360,
-                                  },
-                                },
-                                arrow: {
-                                  sx: {
-                                    color: isDark ? "#444" : "#333",
-                                  },
-                                },
-                              }}
-                            >
-                              <TextField
-                                fullWidth
-                                label="Particular"
-                                value={row.particular}
-                                onClick={(e) => {
-                                  setAnchorEl(e.currentTarget);
-                                  setTimeout(
-                                    () => inputRef.current?.focus(),
-                                    100
-                                  );
-                                }}
-                                inputProps={{ readOnly: true }}
-                                sx={{
-                                  minWidth: "200px",
-                                  maxWidth: "205px",
-                                  cursor: "pointer",
-                                  "& .MuiInputBase-root": {
-                                    backgroundColor: isDark
-                                      ? "#2b2b2b"
-                                      : "#fff",
-                                    color: isDark ? "#fff" : "#000",
-                                    borderRadius: 1,
-                                    paddingRight: "36px !important",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                  },
-                                  "& .MuiInputBase-input": {
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    whiteSpace: "nowrap",
-                                    cursor: "pointer",
-                                  },
-                                  "& label.Mui-focused": {
-                                    color: primaryColor,
-                                  },
-                                  "& .MuiOutlinedInput-notchedOutline": {
-                                    borderColor: isDark ? "#555" : "#ccc",
-                                  },
-                                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                                    borderColor: primaryColor,
-                                  },
-                                  "& .MuiSvgIcon-root": {
-                                    color: isDark ? "#e0f7fa" : "#888",
-                                  },
-                                  "& .MuiInputLabel-root": {
-                                    color: isDark ? "#aaa" : "#555",
-                                  },
-                                }}
-                                InputProps={{
-                                  endAdornment: (
-                                    <KeyboardArrowDownIcon
-                                      sx={{
-                                        position: "absolute",
-                                        right: 8,
-                                        top: "50%",
-                                        fontSize: "18px",
-                                        transform: "translateY(-50%)",
-                                        color: isDark ? "#aaa" : "#666",
-                                        pointerEvents: "none",
-                                      }}
-                                    />
-                                  ),
-                                }}
-                              />
-                            </Tooltip>
-
-                            <Popper
-                              open={Boolean(anchorEl)}
-                              anchorEl={anchorEl}
-                              placement="bottom-start"
-                              style={{ zIndex: 1300 }}
-                              modifiers={[
+                          <TextField
+                            select
+                            fullWidth
+                            label="Particular"
+                            value={row.particular}
+                            onChange={(e) =>
+                              handleProductChange(
+                                index,
+                                "particular",
+                                e.target.value
+                              )
+                            }
+                            sx={{
+                              minWidth: "200px",
+                              maxWidth: "205px",
+                              "& .MuiInputBase-root": {
+                                backgroundColor: isDark ? "#2b2b2b" : "#fff",
+                                color: isDark ? "#fff" : "#000",
+                                borderRadius: 1,
+                              },
+                              "& label.Mui-focused": {
+                                color: primaryColor,
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderColor: isDark ? "#555" : "#ccc",
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: primaryColor,
+                              },
+                              "& .Mui-focused .MuiOutlinedInput-notchedOutline":
                                 {
-                                  name: "offset",
-                                  options: { offset: [0, -200] },
+                                  borderColor: primaryColor,
                                 },
-                              ]}
-                            >
-                              <Fade in={Boolean(anchorEl)} timeout={200}>
-                                <Paper
-                                  sx={{
-                                    width: 320,
+                              "& .MuiSvgIcon-root": {
+                                color: isDark ? "#e0f7fa" : "#888",
+                              },
+                              "& .MuiInputLabel-root": {
+                                color: isDark ? "#aaa" : "#555",
+                              },
+                            }}
+                            SelectProps={{
+                              renderValue: (selected) => selected,
+                              MenuProps: {
+                                PaperProps: {
+                                  sx: {
                                     maxHeight: 480,
                                     backgroundColor: isDark
                                       ? "#1e1e1e"
                                       : "#fff",
                                     border: `1px solid ${primaryColor}`,
-                                    borderRadius: 0,
-                                    mt: 1,
-                                    boxShadow: `0 0 8px ${primaryColor}, 0 0 6px ${primaryColor}`,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                  }}
-                                >
-                                  {/* Fixed Search */}
-                                  <Box
-                                    sx={{
-                                      flexShrink: 0,
-                                      display: "flex",
-                                      alignItems: "center",
+                                    borderRadius: "4px",
+                                    "& .MuiMenuItem-root": {
                                       px: 1.5,
-                                      py: 0.5,
-                                      m: 1,
-                                      borderRadius: 2,
-                                      border: `2px solid ${primaryColor}`,
-                                      backgroundColor: isDark
-                                        ? "#2a2a2a"
-                                        : "#f9f9f9",
-                                    }}
-                                  >
-                                    <SearchIcon
-                                      fontSize="small"
-                                      sx={{ mr: 1, color: primaryColor }}
-                                    />
-                                    <InputBase
-                                      inputRef={inputRef}
-                                      placeholder="Search products..."
-                                      fullWidth
-                                      value={search}
-                                      onChange={(e) =>
-                                        setSearch(e.target.value)
-                                      }
-                                      sx={{
-                                        fontSize: "0.85rem",
-                                        color: isDark ? "#fff" : "#000",
-                                      }}
-                                    />
-                                  </Box>
-
-                                  {/* Scrollable Product List */}
-                                  <Box
-                                    sx={{
-                                      flexGrow: 1,
-                                      overflowY: "auto",
-                                      overflowX: "hidden",
-                                      "&::-webkit-scrollbar": {
-                                        width: "3px",
+                                      py: 0.75,
+                                      fontSize: "0.85rem",
+                                      color: isDark ? "#e0f7fa" : "#333",
+                                      "&:hover": {
+                                        backgroundColor: isDark
+                                          ? "#494e4e"
+                                          : "#f0f0f0",
                                       },
-                                      "&::-webkit-scrollbar-thumb": {
+                                      "&.Mui-selected": {
                                         backgroundColor: primaryColor,
+                                        color: "#fff",
                                       },
-                                      scrollbarWidth: "thin",
-                                      scrollbarColor: `${primaryColor} transparent`,
-                                    }}
+                                    },
+                                    "&::-webkit-scrollbar": {
+                                      width: "6px",
+                                    },
+                                    "&::-webkit-scrollbar-thumb": {
+                                      backgroundColor: primaryColor,
+                                      borderRadius: "6px",
+                                    },
+                                  },
+                                },
+                              },
+                            }}
+                          >
+                            {productList.map((product) => (
+                              <MenuItem
+                                key={product.product_id}
+                                value={product.product_name}
+                                disabled={product.stock_quantity === 0}
+                                sx={{
+                                  opacity:
+                                    product.stock_quantity === 0 ? 0.5 : 1,
+                                  fontStyle:
+                                    product.stock_quantity === 0
+                                      ? "italic"
+                                      : "normal",
+                                  color:
+                                    product.stock_quantity === 0
+                                      ? "gray"
+                                      : "inherit",
+                                  pointerEvents:
+                                    product.stock_quantity === 0
+                                      ? "none"
+                                      : "auto",
+                                }}
+                              >
+                                <Box>
+                                  <Typography
+                                    fontWeight={900}
+                                    fontSize="0.85rem"
+                                    noWrap
                                   >
-                                    {filteredProducts.length > 0 ? (
-                                      filteredProducts.map((product) => {
-                                        const isSelected =
-                                          product.product_name ===
-                                          row.particular;
-                                        return (
-                                          <MenuItem
-                                            key={product.product_id}
-                                            onClick={() => {
-                                              handleProductChange(
-                                                index,
-                                                "particular",
-                                                product.product_name
-                                              );
-                                              setAnchorEl(null);
-                                              setSearch("");
-                                            }}
-                                            disabled={
-                                              product.stock_quantity === 0
-                                            }
-                                            sx={{
-                                              alignItems: "start",
-                                              px: 1.5,
-                                              py: 1,
-                                              fontSize: "0.85rem",
-                                              backgroundColor: isSelected
-                                                ? isDark
-                                                  ? "#2d4c57"
-                                                  : "#daf7d8"
-                                                : "transparent",
-                                              fontWeight: "bold",
-                                              opacity:
-                                                product.stock_quantity === 0
-                                                  ? 0.5
-                                                  : 1,
-                                              fontStyle:
-                                                product.stock_quantity === 0
-                                                  ? "italic"
-                                                  : "normal",
-                                              color:
-                                                product.stock_quantity === 0
-                                                  ? "gray"
-                                                  : isDark
-                                                  ? "#e0f7fa"
-                                                  : "#333",
-                                              "&:hover": {
-                                                backgroundColor: isDark
-                                                  ? "#494e4e"
-                                                  : "#f0f0f0",
-                                              },
-                                            }}
-                                          >
-                                            <Box>
-                                              <Typography
-                                                fontWeight={900}
-                                                fontSize="0.85rem"
-                                                noWrap
-                                              >
-                                                {product.product_name}
-                                                {product.stock_quantity ===
-                                                  0 && (
-                                                  <Typography
-                                                    component="span"
-                                                    sx={{
-                                                      fontWeight: "normal",
-                                                      fontSize: "0.7rem",
-                                                      color: "red",
-                                                      ml: 1,
-                                                    }}
-                                                  >
-                                                    (Out of stock)
-                                                  </Typography>
-                                                )}
-                                              </Typography>
-                                              <Typography
-                                                variant="caption"
-                                                fontSize="0.7rem"
-                                                color={
-                                                  isDark ? "#d8dcdc" : "gray"
-                                                }
-                                                noWrap
-                                              >
-                                                ID: {product.product_id} | HSN:{" "}
-                                                {product.hsn_code} | Stock:{" "}
-                                                {product.stock_quantity} |
-                                                Price: ₹{product.discount_price}
-                                              </Typography>
-                                            </Box>
-                                          </MenuItem>
-                                        );
-                                      })
-                                    ) : (
-                                      <MenuItem
-                                        disabled
+                                    {product.product_name}
+                                    {product.stock_quantity === 0 && (
+                                      <Typography
+                                        component="span"
                                         sx={{
-                                          fontStyle: "italic",
-                                          fontSize: "0.85rem",
-                                          opacity: 0.7,
+                                          fontWeight: "normal",
+                                          fontSize: "0.7rem",
+                                          color: "red",
+                                          ml: 1,
                                         }}
                                       >
-                                        No matching products
-                                      </MenuItem>
+                                        (Out of stock)
+                                      </Typography>
                                     )}
-                                  </Box>
-                                </Paper>
-                              </Fade>
-                            </Popper>
-                          </Box>
-                        </ClickAwayListener>
+                                  </Typography>
+                                  <Typography
+                                    variant="caption"
+                                    fontSize="0.7rem"
+                                    color="gray"
+                                  >
+                                    ID: {product.product_id} | HSN:{" "}
+                                    {product.hsn_code} | Stock:{" "}
+                                    {product.stock_quantity} | Price: ₹
+                                    {product.discount_price}
+                                  </Typography>
+                                </Box>
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </Tooltip>
                       </TableCell>
 
                       {/* Other Fields */}
@@ -2729,137 +2501,147 @@ export default function GstInvoice() {
                 sx={{ display: { xs: "grid", sm: "flex" } }}
               >
                 {[
-  ["GST No", "gst"],
-  ["Customer Name", "name"],
-  ["Address", "address"],
-  ["State", "state"],
-  ["Pincode", "pincode"],
-  ["Mobile No", "mobile"],
-  ["Place of Supply", "placeOfSupply"],
-  ["Vehicle No", "vehicleNo"],
-  ["Invoice No", "invoiceNo"],
-  ["Date", "date"],
-].map(([label, key]) => (
-  <Grid
-    key={key}
-    item
-    xs={12}
-    sm={6}
-    md={4}
-    sx={{ px: { xs: 0, sm: 1 } }}
-  >
-    <Typography
-      variant="subtitle2"
-      sx={{
-        fontWeight: 600,
-        color: isDark ? "#ccc" : "#6a6969",
-        mb: 0.5,
-        display: "flex",
-        alignItems: "center",
-        gap: "4px",
-      }}
-    >
-      {label}
-      <Typography
-        component="span"
-        color="error"
-        sx={{ fontSize: "1.2rem" }}
-      >
-        *
-      </Typography>
-    </Typography>
+                  ["GST No", "gst"],
+                  ["Customer Name", "name"],
+                  ["Address", "address"],
+                  ["State", "state"],
+                  ["Pincode", "pincode"],
+                  ["Mobile No", "mobile"],
+                  ["Place of Supply", "placeOfSupply"],
+                  ["Vehicle No", "vehicleNo"],
+                  ["Invoice No", "invoiceNo"],
+                  ["Date", "date"],
+                ].map(([label, key]) => (
+                  <Grid
+                    key={key}
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    sx={{ px: { xs: 0, sm: 1 } }}
+                  >
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
+                        fontWeight: 600,
+                        color: isDark ? "#ccc" : "#6a6969",
+                        mb: 0.5,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      {label}
+                      <Typography
+                        component="span"
+                        color="error"
+                        sx={{ fontSize: "1.2rem" }}
+                      >
+                        *
+                      </Typography>
+                    </Typography>
 
-    {/* Conditionally show Tooltip only when there's a value */}
-    {customer[key] ? (
-      <Tooltip title={customer[key]} arrow placement="top-start">
-        <TextField
-          fullWidth
-          required
-          name={key}
-          type={key === "date" ? "date" : "text"}
-          InputLabelProps={{ shrink: true }}
-          value={customer[key]}
-          onChange={handleCustomerChange}
-          variant="outlined"
-          placeholder={label}
-          sx={{
-            "& .MuiInputBase-root": {
-              backgroundColor: isDark ? "#2b2b2b" : "#ffffff",
-              color: isDark ? "#fff" : "#000",
-              borderRadius: 0.5,
-            },
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: isDark ? "#555" : "#ccc",
-            },
-            "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: primaryColor,
-            },
-            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: primaryColor,
-            },
-            "& input": {
-              color: isDark ? "#fff" : "#000",
-            },
-            ...(key === "date" && {
-              '& input[type="date"]::-webkit-calendar-picker-indicator': {
-                filter: isDark
-                  ? "invert(46%) sepia(95%) saturate(604%) hue-rotate(148deg) brightness(95%) contrast(88%)"
-                  : "invert(34%) sepia(84%) saturate(1146%) hue-rotate(72deg) brightness(92%) contrast(90%)",
-                cursor: "pointer",
-              },
-              '& input[type="date"]': {
-                accentColor: primaryColor,
-              },
-            }),
-          }}
-        />
-      </Tooltip>
-    ) : (
-      // If no value, render without tooltip
-      <TextField
-        fullWidth
-        required
-        name={key}
-        type={key === "date" ? "date" : "text"}
-        InputLabelProps={{ shrink: true }}
-        value={customer[key]}
-        onChange={handleCustomerChange}
-        variant="outlined"
-        placeholder={label}
-        sx={{
-          "& .MuiInputBase-root": {
-            backgroundColor: isDark ? "#2b2b2b" : "#ffffff",
-            color: isDark ? "#fff" : "#000",
-            borderRadius: 0.5,
-          },
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: isDark ? "#555" : "#ccc",
-          },
-          "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: primaryColor,
-          },
-          "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: primaryColor,
-          },
-          "& input": {
-            color: isDark ? "#fff" : "#000",
-          },
-          ...(key === "date" && {
-            '& input[type="date"]::-webkit-calendar-picker-indicator': {
-              filter: isDark
-                ? "invert(46%) sepia(95%) saturate(604%) hue-rotate(148deg) brightness(95%) contrast(88%)"
-                : "invert(34%) sepia(84%) saturate(1146%) hue-rotate(72deg) brightness(92%) contrast(90%)",
-              cursor: "pointer",
-            },
-            '& input[type="date"]': {
-              accentColor: primaryColor,
-            },
-          }),
-        }}
-      />
-    )}
-  </Grid>
-))}
+                    {/* Conditionally show Tooltip only when there's a value */}
+                    {customer[key] ? (
+                      <Tooltip
+                        title={customer[key]}
+                        arrow
+                        placement="top-start"
+                      >
+                        <TextField
+                          fullWidth
+                          required
+                          name={key}
+                          type={key === "date" ? "date" : "text"}
+                          InputLabelProps={{ shrink: true }}
+                          value={customer[key]}
+                          onChange={handleCustomerChange}
+                          variant="outlined"
+                          placeholder={label}
+                          sx={{
+                            "& .MuiInputBase-root": {
+                              backgroundColor: isDark ? "#2b2b2b" : "#ffffff",
+                              color: isDark ? "#fff" : "#000",
+                              borderRadius: 0.5,
+                            },
+                            "& .MuiOutlinedInput-notchedOutline": {
+                              borderColor: isDark ? "#555" : "#ccc",
+                            },
+                            "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                              {
+                                borderColor: primaryColor,
+                              },
+                            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                              {
+                                borderColor: primaryColor,
+                              },
+                            "& input": {
+                              color: isDark ? "#fff" : "#000",
+                            },
+                            ...(key === "date" && {
+                              '& input[type="date"]::-webkit-calendar-picker-indicator':
+                                {
+                                  filter: isDark
+                                    ? "invert(46%) sepia(95%) saturate(604%) hue-rotate(148deg) brightness(95%) contrast(88%)"
+                                    : "invert(34%) sepia(84%) saturate(1146%) hue-rotate(72deg) brightness(92%) contrast(90%)",
+                                  cursor: "pointer",
+                                },
+                              '& input[type="date"]': {
+                                accentColor: primaryColor,
+                              },
+                            }),
+                          }}
+                        />
+                      </Tooltip>
+                    ) : (
+                      // If no value, render without tooltip
+                      <TextField
+                        fullWidth
+                        required
+                        name={key}
+                        type={key === "date" ? "date" : "text"}
+                        InputLabelProps={{ shrink: true }}
+                        value={customer[key]}
+                        onChange={handleCustomerChange}
+                        variant="outlined"
+                        placeholder={label}
+                        sx={{
+                          "& .MuiInputBase-root": {
+                            backgroundColor: isDark ? "#2b2b2b" : "#ffffff",
+                            color: isDark ? "#fff" : "#000",
+                            borderRadius: 0.5,
+                          },
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: isDark ? "#555" : "#ccc",
+                          },
+                          "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderColor: primaryColor,
+                            },
+                          "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                            {
+                              borderColor: primaryColor,
+                            },
+                          "& input": {
+                            color: isDark ? "#fff" : "#000",
+                          },
+                          ...(key === "date" && {
+                            '& input[type="date"]::-webkit-calendar-picker-indicator':
+                              {
+                                filter: isDark
+                                  ? "invert(46%) sepia(95%) saturate(604%) hue-rotate(148deg) brightness(95%) contrast(88%)"
+                                  : "invert(34%) sepia(84%) saturate(1146%) hue-rotate(72deg) brightness(92%) contrast(90%)",
+                                cursor: "pointer",
+                              },
+                            '& input[type="date"]': {
+                              accentColor: primaryColor,
+                            },
+                          }),
+                        }}
+                      />
+                    )}
+                  </Grid>
+                ))}
               </Grid>
             </motion.div>
           </AnimatedBox>
@@ -2973,11 +2755,11 @@ export default function GstInvoice() {
           <Grid
             sx={{
               display: "flex",
-              flexDirection: {xs: 'column', sm: 'row'},
+              flexDirection: { xs: "column", sm: "row" },
               gap: "10px",
               p: 0,
               textAlign: { xs: "center", sm: "right" },
-              justifyContent: 'flex-end',
+              justifyContent: "flex-end",
             }}
           >
             <Button
