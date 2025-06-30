@@ -307,28 +307,32 @@ const ProductModal = ({
           ))}
 
           <TextField
-            label="Category"
-            name="category_id"
-            fullWidth
-            select
-            margin="dense"
-            value={productData.category_id}
-            onChange={handleChange}
-            variant="filled"
-            InputProps={{
-              style: {
-                backgroundColor: isDark ? "#1e1e1e" : "#f0f0f0",
-                color: isDark ? "#fff" : "#000",
-              },
-            }}
-            InputLabelProps={{ style: { color: isDark ? "#aaa" : "#555" } }}
-          >
-            {categories.map((category) => (
-              <MenuItem key={category.category_id} value={category.category_id}>
-                {category.category_name}
-              </MenuItem>
-            ))}
-          </TextField>
+  label="Category"
+  name="category_id"
+  fullWidth
+  select
+  margin="dense"
+  value={productData.category_id}
+  onChange={handleChange}
+  variant="filled"
+  InputProps={{
+    style: {
+      backgroundColor: isDark ? "#1e1e1e" : "#f0f0f0",
+      color: isDark ? "#fff" : "#000",
+    },
+  }}
+  InputLabelProps={{ style: { color: isDark ? "#aaa" : "#555" } }}
+>
+  {categories.map((category) => (
+    <MenuItem
+      key={category.category_id}
+      value={category.category_id}
+      disabled={!category.is_active}
+    >
+      {category.category_name} {!category.is_active && "(Inactive)"}
+    </MenuItem>
+  ))}
+</TextField>
 
           {[
             { label: "Price (₹)", name: "price" },

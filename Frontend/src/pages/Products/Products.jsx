@@ -376,13 +376,11 @@ const Products = () => {
               "&:hover": {
                 boxShadow: `0 0 8px ${primaryColor}, 0 0 6px ${primaryColor}`,
                 filter: "brightness(1.1)",
-                transform: "scale(1.05)",
-                transition: "all 0.3s ease",
               },
             }}
           >
             {showTracedOnly
-              ? "Go back to active Products"
+              ? "Show Active Products"
               : "Show Traced Products"}
           </Button>
 
