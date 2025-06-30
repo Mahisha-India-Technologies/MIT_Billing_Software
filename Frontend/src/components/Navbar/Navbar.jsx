@@ -29,7 +29,7 @@ import { ColorModeContext } from "../../Context/ThemeContext.jsx";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import Diversity1OutlinedIcon from "@mui/icons-material/Diversity1Outlined";
-import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
+import AutoModeIcon from "@mui/icons-material/AutoMode";
 
 const drawerWidth = 240;
 
@@ -145,6 +145,12 @@ const pages = [
     text: "Products & Stock",
     icon: <Inventory2RoundedIcon />,
     path: "/products",
+    roles: ["admin", "customer"],
+  },
+  {
+    text: "Category Master",
+    icon: <AutoModeIcon />,
+    path: "/category-master",
     roles: ["admin", "customer"],
   },
   {
@@ -364,6 +370,7 @@ function Navbar({ user, onLogout, open, variant, setOpen }) {
                     to={path}
                     onClick={() => setOpen(false)}
                     sx={{
+                      fontWeight: "bold",
                       justifyContent: open ? "initial" : "center",
                       px: 2.5,
                       backgroundColor: isActive
@@ -385,13 +392,15 @@ function Navbar({ user, onLogout, open, variant, setOpen }) {
                         color: isActive
                           ? theme.palette.primary.main
                           : theme.palette.text.secondary,
+                        fontWeight: "bold",
                       }}
                     >
-                      {icon}
+                      {React.cloneElement(icon, { sx: { fontWeight: "bold" } })}
                     </ListItemIcon>
                     <ListItemText
                       primary={text}
-                      sx={{ opacity: open ? 1 : 0 }}
+                      sx={{ opacity: open ? 1 : 0, fontWeight: "bold" }}
+                      primaryTypographyProps={{ fontWeight: "bold" }}
                     />
                   </ListItemButton>
                 </ListItem>

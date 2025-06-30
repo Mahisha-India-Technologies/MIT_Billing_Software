@@ -32,6 +32,116 @@ router.use((req, res, next) => {
   next();
 });
 
+// ========== YOUR EXISTING ROUTES ==========
+// ... [all existing add, edit, delete, get routes stay the same]
+
+// ==============================
+// 6. IMAGE UPLOAD ROUTE
+// ==============================
+router.post("/upload", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No image uploaded" });
+  }
+
+  const imagePath = `images/products/${req.file.filename}`;
+  res.status(200).json({ imagePath });
+});
+
+// ==============================
+// 1. ADD A NEW PRODUCT
+// ==============================
+router.post("/add", async (req, res) => {
+  try {
+    const {
+      product_name,
+      hsn_code,
+      category_id,
+      price,
+      stock_quantity,
+      description,
+      image_url,
+      gst,
+      c_gst,
+      s_gst,
+      discount = 0,
+    } = req.body;
+
+    if (
+      !product_name ||
+      !hsn_code ||
+      !category_id ||
+      price == null ||
+      stock_quantity == null ||
+      gst == null ||
+      c_gst == null ||
+      s_gst == null
+    ) {
+      return res.status(400).json({
+        error:
+          "Required fields missing: product_name, hsn_code, category_id, price, stock_quantity, gst, c_gst, s_gst",
+      });
+    }
+
+    const validatePercentage = (val) =>
+      typeof val === "number" && !isNaN(val) && val >= 0 && val <= 300;
+
+    if (
+      !validatePercentage(gst) ||
+      !validatePercentage(c_gst) ||
+      !validatePercentage(s_gst)
+    ) {
+      return res.status(400).json({
+        error: "gst, c_gst, and s_gst must be numbers between 0 and 300",
+      });
+    }
+
+    const validDiscount =
+      typeof discount === "number" && !isNaN(discount) && discount >= 0;
+    if (!validDiscount) {
+      return res.status(400).json({ error: "Discount must be a positive number" });
+    }
+
+    // ✅ Validate category (must be active)
+    const [categoryCheck] = await db.execute(
+  "SELECT * FROM product_categories WHERE category_id = ? AND is_active = 1",
+  [category_id]
+);
+if (categoryCheck.length === 0) {
+  return res.status(400).json({ error: "Invalid or inactive category ID" });
+}
+
+    const insertQuery = `
+      INSERT INTO products (
+        product_name, hsn_code, category_id, price, stock_quantity,
+        description, image_url, gst, c_gst, s_gst, discount
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const [result] = await db.execute(insertQuery, [
+      product_name,
+      hsn_code,
+      category_id,
+      price,
+      stock_quantity,
+      description || "",
+      image_url || "",
+      gst,
+      c_gst,
+      s_gst,
+      discount,
+    ]);
+
+    res.status(201).json({
+      message: "Product added successfully",
+      product_id: result.insertId,
+    });
+  } catch (error) {
+    console.error("Error adding product:", error);
+    res.status(500).json({ error: "Failed to add product" });
+  }
+});
+
+
 // ==============================
 // 2. EDIT A PRODUCT BY ID (with image deletion)
 // ==============================
@@ -99,9 +209,16 @@ router.put("/edit/:id", async (req, res) => {
     }
 
     const [categoryRows] = await db.execute(
-      "SELECT category_id FROM product_categories WHERE category_id = ?",
-      [category_id]
-    );
+  "SELECT category_id, is_active FROM product_categories WHERE category_id = ?",
+  [category_id]
+);
+
+if (categoryRows.length === 0) {
+  return res.status(400).json({ error: "Category does not exist" });
+}
+
+// Optionally warn the user if they selected an inactive category
+const isActive = categoryRows[0].is_active;
     if (categoryRows.length === 0) {
       return res.status(400).json({ error: "Category does not exist" });
     }
@@ -150,113 +267,35 @@ router.put("/edit/:id", async (req, res) => {
   }
 });
 
-// ========== YOUR EXISTING ROUTES ==========
-// ... [all existing add, edit, delete, get routes stay the same]
-
-// ==============================
-// 6. IMAGE UPLOAD ROUTE
-// ==============================
-router.post("/upload", upload.single("image"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No image uploaded" });
+// Fetch all product categories
+router.get("/categories", async (req, res) => {
+  try {
+    const [categories] = await db.execute(`
+      SELECT category_id, category_name, is_active
+      FROM product_categories
+      ORDER BY category_name ASC
+    `);
+    res.json(categories);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    res.status(500).json({ error: "Failed to fetch categories" });
   }
-
-  const imagePath = `images/products/${req.file.filename}`;
-  res.status(200).json({ imagePath });
 });
 
-// ==============================
-// 1. ADD A NEW PRODUCT
-// ==============================
-router.post("/add", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const {
-      product_name,
-      hsn_code,
-      category_id,
-      price,
-      stock_quantity,
-      description,
-      image_url,
-      gst,
-      c_gst,
-      s_gst,
-      discount = 0, // ✅ add default if not provided
-    } = req.body;
+    const [products] = await db.execute(`
+      SELECT p.*, c.category_name
+      FROM products p
+      JOIN product_categories c ON p.category_id = c.category_id
+      WHERE p.is_traced = FALSE
+      ORDER BY p.created_at DESC
+    `);
 
-    // Basic validation
-    if (
-      !product_name ||
-      !hsn_code ||
-      !category_id ||
-      price == null ||
-      stock_quantity == null ||
-      gst == null ||
-      c_gst == null ||
-      s_gst == null
-    ) {
-      return res.status(400).json({
-        error:
-          "Required fields missing: product_name, hsn_code, category_id, price, stock_quantity, gst, c_gst, s_gst",
-      });
-    }
-
-    const validatePercentage = (val) =>
-      typeof val === "number" && !isNaN(val) && val >= 0 && val <= 300;
-
-    if (
-      !validatePercentage(gst) ||
-      !validatePercentage(c_gst) ||
-      !validatePercentage(s_gst)
-    ) {
-      return res.status(400).json({
-        error: "gst, c_gst, and s_gst must be numbers between 0 and 300",
-      });
-    }
-
-    const validDiscount =
-      typeof discount === "number" && !isNaN(discount) && discount >= 0;
-    if (!validDiscount) {
-      return res.status(400).json({ error: "Discount must be a positive number" });
-    }
-
-    // Validate category
-    const [categoryCheck] = await db.execute(
-      "SELECT * FROM product_categories WHERE category_id = ?",
-      [category_id]
-    );
-    if (categoryCheck.length === 0) {
-      return res.status(400).json({ error: "Invalid category ID" });
-    }
-
-    const insertQuery = `
-      INSERT INTO products (
-        product_name, hsn_code, category_id, price, stock_quantity,
-        description, image_url, gst, c_gst, s_gst, discount
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const [result] = await db.execute(insertQuery, [
-      product_name,
-      hsn_code,
-      category_id,
-      price,
-      stock_quantity,
-      description || "",
-      image_url || "",
-      gst,
-      c_gst,
-      s_gst,
-      discount,
-    ]);
-
-    res.status(201).json({
-      message: "Product added successfully",
-      product_id: result.insertId,
-    });
+    res.json(products);
   } catch (error) {
-    console.error("Error adding product:", error);
-    res.status(500).json({ error: "Failed to add product" });
+    console.error("Error fetching products:", error);
+    res.status(500).json({ error: "Failed to fetch products" });
   }
 });
 
@@ -305,25 +344,6 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-// ==============================
-// 4. GET ALL PRODUCTS
-// ==============================
-router.get("/", async (req, res) => {
-  try {
-    const [products] = await db.execute(`
-      SELECT p.*, c.category_name
-      FROM products p
-      JOIN product_categories c ON p.category_id = c.category_id
-      WHERE p.is_traced = FALSE
-      ORDER BY p.created_at DESC
-    `);
-
-    res.json(products);
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    res.status(500).json({ error: "Failed to fetch products" });
-  }
-});
 
 //Traced Products fetching Route
 router.get("/traced", async (req, res) => {
@@ -361,17 +381,6 @@ router.put("/:productId/toggle-trace", async (req, res) => {
   } catch (error) {
     console.error("Error toggling trace status:", error);
     res.status(500).json({ error: "Failed to toggle trace status" });
-  }
-});
-
-// Fetch all product categories
-router.get("/categories", async (req, res) => {
-  try {
-    const [categories] = await db.execute("SELECT * FROM product_categories");
-    res.json(categories);
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    res.status(500).json({ error: "Failed to fetch categories" });
   }
 });
 
