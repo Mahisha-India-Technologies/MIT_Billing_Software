@@ -1383,32 +1383,39 @@ export default function GstInvoice() {
                       ];
                       return (
                         <Grid item xs={12} key={i}>
-                          <TextField
-                            label={label}
-                            fullWidth
-                            value={row[keys[i]]}
-                            disabled
-                            variant="outlined"
-                            sx={{
-                              "& .MuiInputBase-root": {
-                                backgroundColor: isDark ? "#2b2b2b" : "#f5f5f5",
-                                color: isDark ? "#fff" : "#000",
-                                borderRadius: 1,
-                              },
-                              "& .Mui-disabled": {
-                                WebkitTextFillColor: isDark
-                                  ? "#fff"
-                                  : "#474947", // Ensures proper text color when disabled
-                              },
-                              "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: isDark ? "#555" : "#ccc",
-                              },
-                              "& .MuiInputLabel-root": {
-                                color: isDark ? "#aaa" : "#555",
-                              },
-                            }}
-                          />
-                        </Grid>
+  <TextField
+    label={label}
+    fullWidth
+    value={row[keys[i]]}
+    disabled
+    variant="outlined"
+    sx={{
+      "& .MuiInputBase-root": {
+        backgroundColor: isDark ? "#2b2b2b" : "#f5f5f5",
+        color: isDark ? "#fff" : "#000",
+        borderRadius: 1,
+      },
+      "& .Mui-disabled": {
+        WebkitTextFillColor: isDark ? "#aaa" : "#595a59", // Normal disabled color
+      },
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: isDark ? "#555" : "#ccc",
+      },
+      "& .MuiInputLabel-root": {
+        color: isDark ? "#aaa" : "#555",
+      },
+
+      // Autofill override styles
+      "& input:-webkit-autofill": {
+        WebkitBoxShadow: `0 0 0 100px ${isDark ? "#2b2b2b" : "#f5f5f5"} inset`,
+        WebkitTextFillColor: isDark ? "#aaa" : "#595a59",
+        caretColor: isDark ? "#aaa" : "#595a59",
+        borderRadius: 1,
+        transition: "background-color 5000s ease-in-out 0s",
+      },
+    }}
+  />
+</Grid>
                       );
                     })}
 
@@ -2722,94 +2729,137 @@ export default function GstInvoice() {
                 sx={{ display: { xs: "grid", sm: "flex" } }}
               >
                 {[
-                  ["GST No", "gst"],
-                  ["Customer Name", "name"],
-                  ["Address", "address"],
-                  ["State", "state"],
-                  ["Pincode", "pincode"],
-                  ["Mobile No", "mobile"],
-                  ["Place of Supply", "placeOfSupply"],
-                  ["Vehicle No", "vehicleNo"],
-                  ["Invoice No", "invoiceNo"],
-                  ["Date", "date"],
-                ].map(([label, key]) => (
-                  <Grid
-                    key={key}
-                    item
-                    xs={12}
-                    sm={6}
-                    md={4}
-                    sx={{ px: { xs: 0, sm: 1 } }}
-                  >
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        fontWeight: 600,
-                        color: isDark ? "#ccc" : "#6a6969",
-                        mb: 0.5,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      {label}
-                      <Typography
-                        component="span"
-                        color="error"
-                        sx={{ fontSize: "1.2rem" }} // ← Adjust size here (e.g., "0.8rem", "1rem")
-                      >
-                        *
-                      </Typography>
-                    </Typography>
+  ["GST No", "gst"],
+  ["Customer Name", "name"],
+  ["Address", "address"],
+  ["State", "state"],
+  ["Pincode", "pincode"],
+  ["Mobile No", "mobile"],
+  ["Place of Supply", "placeOfSupply"],
+  ["Vehicle No", "vehicleNo"],
+  ["Invoice No", "invoiceNo"],
+  ["Date", "date"],
+].map(([label, key]) => (
+  <Grid
+    key={key}
+    item
+    xs={12}
+    sm={6}
+    md={4}
+    sx={{ px: { xs: 0, sm: 1 } }}
+  >
+    <Typography
+      variant="subtitle2"
+      sx={{
+        fontWeight: 600,
+        color: isDark ? "#ccc" : "#6a6969",
+        mb: 0.5,
+        display: "flex",
+        alignItems: "center",
+        gap: "4px",
+      }}
+    >
+      {label}
+      <Typography
+        component="span"
+        color="error"
+        sx={{ fontSize: "1.2rem" }}
+      >
+        *
+      </Typography>
+    </Typography>
 
-                    <TextField
-                      fullWidth
-                      required
-                      name={key}
-                      type={key === "date" ? "date" : "text"}
-                      InputLabelProps={{ shrink: true }}
-                      value={customer[key]}
-                      onChange={handleCustomerChange}
-                      variant="outlined"
-                      placeholder={label}
-                      sx={{
-                        "& .MuiInputBase-root": {
-                          backgroundColor: isDark ? "#2b2b2b" : "#ffffff",
-                          color: isDark ? "#fff" : "#000",
-                          borderRadius: 0.5,
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: isDark ? "#555" : "#ccc",
-                        },
-                        "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
-                          {
-                            borderColor: primaryColor,
-                          },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                          {
-                            borderColor: primaryColor,
-                          },
-                        "& input": {
-                          color: isDark ? "#fff" : "#000",
-                        },
-
-                        // === Date field customizations ===
-                        ...(key === "date" && {
-                          '& input[type="date"]::-webkit-calendar-picker-indicator':
-                            {
-                              filter: isDark
-                                ? "invert(46%) sepia(95%) saturate(604%) hue-rotate(148deg) brightness(95%) contrast(88%)"
-                                : "invert(34%) sepia(84%) saturate(1146%) hue-rotate(72deg) brightness(92%) contrast(90%)",
-                              cursor: "pointer",
-                            },
-                          '& input[type="date"]': {
-                            accentColor: primaryColor,
-                          },
-                        }),
-                      }}
-                    />
-                  </Grid>
-                ))}
+    {/* Conditionally show Tooltip only when there's a value */}
+    {customer[key] ? (
+      <Tooltip title={customer[key]} arrow placement="top-start">
+        <TextField
+          fullWidth
+          required
+          name={key}
+          type={key === "date" ? "date" : "text"}
+          InputLabelProps={{ shrink: true }}
+          value={customer[key]}
+          onChange={handleCustomerChange}
+          variant="outlined"
+          placeholder={label}
+          sx={{
+            "& .MuiInputBase-root": {
+              backgroundColor: isDark ? "#2b2b2b" : "#ffffff",
+              color: isDark ? "#fff" : "#000",
+              borderRadius: 0.5,
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: isDark ? "#555" : "#ccc",
+            },
+            "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: primaryColor,
+            },
+            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: primaryColor,
+            },
+            "& input": {
+              color: isDark ? "#fff" : "#000",
+            },
+            ...(key === "date" && {
+              '& input[type="date"]::-webkit-calendar-picker-indicator': {
+                filter: isDark
+                  ? "invert(46%) sepia(95%) saturate(604%) hue-rotate(148deg) brightness(95%) contrast(88%)"
+                  : "invert(34%) sepia(84%) saturate(1146%) hue-rotate(72deg) brightness(92%) contrast(90%)",
+                cursor: "pointer",
+              },
+              '& input[type="date"]': {
+                accentColor: primaryColor,
+              },
+            }),
+          }}
+        />
+      </Tooltip>
+    ) : (
+      // If no value, render without tooltip
+      <TextField
+        fullWidth
+        required
+        name={key}
+        type={key === "date" ? "date" : "text"}
+        InputLabelProps={{ shrink: true }}
+        value={customer[key]}
+        onChange={handleCustomerChange}
+        variant="outlined"
+        placeholder={label}
+        sx={{
+          "& .MuiInputBase-root": {
+            backgroundColor: isDark ? "#2b2b2b" : "#ffffff",
+            color: isDark ? "#fff" : "#000",
+            borderRadius: 0.5,
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: isDark ? "#555" : "#ccc",
+          },
+          "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: primaryColor,
+          },
+          "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: primaryColor,
+          },
+          "& input": {
+            color: isDark ? "#fff" : "#000",
+          },
+          ...(key === "date" && {
+            '& input[type="date"]::-webkit-calendar-picker-indicator': {
+              filter: isDark
+                ? "invert(46%) sepia(95%) saturate(604%) hue-rotate(148deg) brightness(95%) contrast(88%)"
+                : "invert(34%) sepia(84%) saturate(1146%) hue-rotate(72deg) brightness(92%) contrast(90%)",
+              cursor: "pointer",
+            },
+            '& input[type="date"]': {
+              accentColor: primaryColor,
+            },
+          }),
+        }}
+      />
+    )}
+  </Grid>
+))}
               </Grid>
             </motion.div>
           </AnimatedBox>
@@ -2923,6 +2973,7 @@ export default function GstInvoice() {
           <Grid
             sx={{
               display: "flex",
+              flexDirection: {xs: 'column', sm: 'row'},
               gap: "10px",
               p: 0,
               textAlign: { xs: "center", sm: "right" },
@@ -2963,7 +3014,6 @@ export default function GstInvoice() {
               mb={2}
               onClick={handleSubmit}
               sx={{
-                ml: "10px",
                 gap: "8px",
                 mt: "10px",
                 textTransform: "none",

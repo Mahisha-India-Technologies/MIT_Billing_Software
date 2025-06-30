@@ -52,6 +52,8 @@ function InvoicePreviewModal({ open, onClose, invoice }) {
           borderRadius: 3,
           border: `1px solid ${themeColor}`,
           boxShadow: `0 0 10px ${themeColor}`,
+          width: { xs: "95%", sm: "90%", md: "85%", lg: "auto", },
+          margin: "auto", 
         },
       }}
     >
@@ -463,7 +465,7 @@ function InvoicePreviewModal({ open, onClose, invoice }) {
                     value: `₹${formatCurrency(invoice.subtotal)}`,
                   },
                   {
-                    label: `Discount (${
+                    label: `Discount in (${
                       invoice.discount_type === "%" ? `%` : `₹`
                     })`,
                     value: `₹${formatCurrency(invoice.discount_value)}`,
@@ -518,15 +520,15 @@ function InvoicePreviewModal({ open, onClose, invoice }) {
                 <Box sx={{ color: "#ccc" }}>
                   {[
                     {
-                      label: `GST (${invoice.gst_amount}%)`,
+                      label: `GST (${invoice.gst_percentage}%)`,
                       value: `₹${formatCurrency(invoice.gst_amount)}`,
                     },
                     {
-                      label: `CGST (${(invoice.gst_amount / 2).toFixed(2)}%)`,
+                      label: `CGST (${(invoice.gst_percentage / 2).toFixed(2)}%)`,
                       value: `₹${formatCurrency(invoice.cgst_amount)}`,
                     },
                     {
-                      label: `SGST (${(invoice.gst_amount / 2).toFixed(2)}%)`,
+                      label: `SGST (${(invoice.gst_percentage / 2).toFixed(2)}%)`,
                       value: `₹${formatCurrency(invoice.sgst_amount)}`,
                     },
                     {

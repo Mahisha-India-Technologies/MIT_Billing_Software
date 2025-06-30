@@ -86,24 +86,35 @@ const AddUsers = () => {
   }, []);
 
   const deleteUser = async (id) => {
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/users/delete/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        showSnackbar("User deleted successfully", "success");
-        fetchUsers();
-      }
-      if (res.status === 400) {
-        const data = await res.json();
-        showSnackbar(data.message, "error");
-      } else {
-        showSnackbar("Failed to delete user", "error");
-      }
-    } catch (err) {
-      showSnackbar("An error occurred while deleting user", "error");
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/users/delete/${id}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      // ✅ Successful deletion (HTTP 200 or 204)
+      showSnackbar("User deleted successfully", "success");
+      fetchUsers(); // Refresh the user list
+    } else if (res.status === 400) {
+      // ⚠️ Bad request – likely client-side issue, show server's message
+      const data = await res.json();
+      showSnackbar(data.message || "Invalid delete request", "error");
+    } else if (res.status === 404) {
+      // ❌ Not found – user doesn't exist
+      showSnackbar("User not found", "error");
+    } else if (res.status === 409) {
+      // ❌ Conflict – maybe user is linked to something (like active invoice)
+      showSnackbar("Cannot delete user due to existing dependencies", "error");
+    } else {
+      // ❌ Other errors – fallback for 500, 403, etc.
+      showSnackbar("Failed to delete user. Please try again.", "error");
     }
-  };
+  } catch (err) {
+    // 🛑 Network error or unexpected exception
+    showSnackbar("An error occurred while deleting user", "error");
+    console.error("Delete User Error:", err);
+  }
+};
 
   const [passwordVisibility, setPasswordVisibility] = useState({});
 
@@ -230,7 +241,7 @@ const AddUsers = () => {
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", gap: "10px", mt: { xs: 2, sm: 0 } }}>
+        <Box sx={{ display: "flex", gap: "10px", mt: { xs: 2, sm: 0 }, flexDirection: {xs: 'column', sm: 'row'} }}>
           <Button
             variant="outlined"
             startIcon={<CompareOutlinedIcon />}
@@ -267,7 +278,6 @@ const AddUsers = () => {
               backgroundColor: "transparent",
               transition: "all 0.3s ease-in-out",
               fontWeight: "bold",
-              maxWidth: "150px",
               textAlign: "center",
               "&:hover": {
                 boxShadow: `0 0 8px ${primaryColor}, 0 0 6px ${primaryColor}`,

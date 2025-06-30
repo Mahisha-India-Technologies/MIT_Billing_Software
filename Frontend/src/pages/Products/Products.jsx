@@ -328,6 +328,7 @@ const Products = () => {
           justifyContent: "space-between",
           alignItems: "center",
           mb: 4,
+          mt: {xs: 2, sm: 0},
           flexWrap: { xs: "wrap", sm: "nowrap" },
           gap: { xs: 2, sm: 0 },
         }}
@@ -492,6 +493,7 @@ const Products = () => {
               borderRadius: 2,
               alignItems: "center",
               p: 1.2,
+              mb: {xs: 1, sm: 0},
               "&:hover": {
                 backgroundColor: primaryColor,
                 color: "#fff",
