@@ -55,7 +55,7 @@ export default function RecentStockMovementsTable({
         sx={{
           maxHeight: 420, // slightly increased for pagination usability
           overflowX: "auto",
-          "&::-webkit-scrollbar": { height: 6 },
+          "&::-webkit-scrollbar": { height: 6, width: '4px' },
           "&::-webkit-scrollbar-thumb": {
             backgroundColor: "#888",
             borderRadius: 4,

@@ -40,10 +40,10 @@ const TopGSTProductsTable = ({
     <Paper
       elevation={3}
       sx={{
+        borderRadius: 3,
         overflow: "hidden",
         border: `2px solid ${primaryColor}`,
         boxShadow: `0 0 10px ${primaryColor}66`,
-        borderRadius: 3,
       }}
     >
       <TableContainer
@@ -57,7 +57,7 @@ const TopGSTProductsTable = ({
           },
         }}
       >
-        <Table stickyHeader size="small" sx={{ minWidth: 1200 }}>
+        <Table stickyHeader size="small" sx={{ minWidth: 1000 }}>
           <TableHead>
             <TableRow sx={{ backgroundColor: isDark ? "#1e1e1e" : "#f5f5f5" }}>
               {[

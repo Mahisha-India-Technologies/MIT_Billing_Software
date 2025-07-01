@@ -316,7 +316,7 @@ const AddUsers = () => {
             <Table
               size="small"
               sx={{
-                minWidth: 800,
+                minWidth: 1000,
                 width: "100%",
               }}
             >
@@ -362,7 +362,7 @@ const AddUsers = () => {
                 ) : (
                   paginated.map((u, index) => (
                     <TableRow key={u.user_id} hover>
-                      <TableCell sx={{ fontWeight: "bold" }}>
+                      <TableCell sx={{ fontWeight: "bold", width: '30px', textAlign: 'center' }}>
                         {index + 1 + page * rowsPerPage}
                       </TableCell>
                       <TableCell
@@ -460,7 +460,6 @@ const AddUsers = () => {
   mode={modalMode}
   userToEdit={selectedUser}
 />
-
       <CompanyInfoModal
         open={openInfoModal}
         handleClose={() => setOpenInfoModal(false)}

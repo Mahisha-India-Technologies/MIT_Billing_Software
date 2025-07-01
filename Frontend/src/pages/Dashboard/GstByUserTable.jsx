@@ -55,7 +55,7 @@ export default function GstByUserTable({
         sx={{
           maxHeight: 420,
           overflowX: "auto",
-          "&::-webkit-scrollbar": { height: 6 },
+          "&::-webkit-scrollbar": { height: 6, width: '4px' },
           "&::-webkit-scrollbar-thumb": {
             backgroundColor: "#888",
             borderRadius: 4,

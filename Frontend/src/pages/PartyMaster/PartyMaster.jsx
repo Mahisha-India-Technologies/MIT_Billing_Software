@@ -589,7 +589,7 @@ function PartyMaster() {
               boxShadow: `0 0 8px ${primaryColor}66`,
             }}
           >
-            <Table size="small" sx={{ minWidth: 1200, width: "100%" }}>
+            <Table size="small" sx={{ minWidth: 1100, width: "100%" }}>
               <TableHead>
                 <TableRow
                   sx={{ backgroundColor: isDark ? "#121212" : "#f4f4f4" }}
