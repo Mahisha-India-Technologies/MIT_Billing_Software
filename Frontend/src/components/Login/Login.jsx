@@ -16,20 +16,20 @@ import logo from "../../assets/images/logo2.svg";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import API_BASE_URL from "../../Context/Api";
+import { useAuth } from "../../Context/AuthContext";
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
-  const primaryColor = theme.palette.primary.main;
+  const { login } = useAuth(); // ✅ Access login from context
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
-  // Refs for input focus
+
   const passwordRef = useRef();
 
   const handleLogin = async () => {
@@ -45,15 +45,11 @@ const LoginPage = ({ onLogin }) => {
       });
 
       const { user, token } = res.data;
-      const expirySeconds = res.data.user.tokenExpiry; // From backend
-      const expiryMs = expirySeconds * 1000; // Convert to milliseconds
+      login(user, token); // ✅ Use global login function from context
 
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("tokenExpiry", expiryMs.toString()); // Save expiry for auto-logout
-
-      onLogin(user, token);
+      // Optional redirect here if needed, but context + AppLayout already handles it
     } catch (err) {
+      console.error("Login error:", err);
       setError("Invalid username or password");
     }
   };
@@ -81,12 +77,11 @@ const LoginPage = ({ onLogin }) => {
           bgcolor: isDark ? "#1e1e1e" : "#ffffff",
           color: theme.palette.text.primary,
           borderRadius: 4,
-          boxShadow: `0 0 20px ${primaryColor}`,
+          boxShadow: `0 0 20px ${theme.palette.primary.main}`,
           p: isMobile ? 3 : 4,
           border: `1px solid ${isDark ? "#00bcd4" : "#cfd8dc"}`,
         }}
       >
-        {/* Logo */}
         <Box display="flex" justifyContent="center" mb={2}>
           <img
             src={logo}
@@ -98,28 +93,20 @@ const LoginPage = ({ onLogin }) => {
           />
         </Box>
 
-        {/* Title */}
         <Typography
           variant="h4"
           align="center"
           fontWeight="bold"
-          sx={{ color: primaryColor, mb: 2 }}
+          sx={{ color: theme.palette.primary.main, mb: 2 }}
         >
           Mahisha Bills
         </Typography>
 
-        <Divider sx={{ mb: 3, borderColor: primaryColor }} />
+        <Divider sx={{ mb: 3, borderColor: theme.palette.primary.main }} />
 
-        <Typography
-          variant="subtitle2"
-          fontWeight="bold"
-          gutterBottom
-          sx={{ color: isDark ? "#aaa" : "#333" }}
-        >
-          Username{" "}
-          <Typography component="span" color="error">
-            *
-          </Typography>
+        {/* Username */}
+        <Typography variant="subtitle2" fontWeight="bold" gutterBottom sx={{ color: isDark ? "#aaa" : "#333" }}>
+          Username <Typography component="span" color="error">*</Typography>
         </Typography>
         <TextField
           fullWidth
@@ -135,7 +122,6 @@ const LoginPage = ({ onLogin }) => {
               passwordRef.current?.focus();
             }
           }}
-          InputLabelProps={{ shrink: true }}
           sx={{
             mb: 2,
             "& .MuiOutlinedInput-root": {
@@ -144,16 +130,9 @@ const LoginPage = ({ onLogin }) => {
           }}
         />
 
-        <Typography
-          variant="subtitle2"
-          fontWeight="bold"
-          gutterBottom
-          sx={{ color: isDark ? "#aaa" : "#333" }}
-        >
-          Password{" "}
-          <Typography component="span" color="error">
-            *
-          </Typography>
+        {/* Password */}
+        <Typography variant="subtitle2" fontWeight="bold" gutterBottom sx={{ color: isDark ? "#aaa" : "#333" }}>
+          Password <Typography component="span" color="error">*</Typography>
         </Typography>
         <TextField
           fullWidth
@@ -171,24 +150,20 @@ const LoginPage = ({ onLogin }) => {
               handleLogin();
             }
           }}
-          InputLabelProps={{ shrink: true }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => setShowPassword((prev) => !prev)} edge="end">
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
           sx={{
             mb: 2,
             "& .MuiOutlinedInput-root": {
               borderRadius: "10px",
             },
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
           }}
         />
 
@@ -208,13 +183,13 @@ const LoginPage = ({ onLogin }) => {
             fontSize: "1rem",
             fontWeight: "bold",
             borderRadius: 3,
-            background: primaryColor,
+            background: theme.palette.primary.main,
             color: "#fff",
             "&:hover": {
               background: isDark
                 ? "linear-gradient(45deg, #00acc1, #00e5ff)"
-                : "linear-gradient(45deg,rgb(27, 77, 43),rgb(27, 95, 58))",
-              boxShadow: `0 0 12px ${primaryColor}`,
+                : "linear-gradient(45deg, rgb(27, 77, 43), rgb(27, 95, 58))",
+              boxShadow: `0 0 12px ${theme.palette.primary.main}`,
             },
           }}
         >
