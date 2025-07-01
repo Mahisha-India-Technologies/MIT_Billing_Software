@@ -127,7 +127,7 @@ export default function GstInvoice() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // success | error | warning | info
 
-  const [showCustomer, setShowCustomer] = useState(false);
+  const [showCustomer, setShowCustomer] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState({});
 
   const [selectModalOpen, setSelectModalOpen] = useState(false);
@@ -957,26 +957,6 @@ export default function GstInvoice() {
             >
               Load Draft
             </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<DeleteSweepIcon />}
-              onClick={() => setConfirmClearOpen(true)}
-              sx={{
-                textTransform: "none",
-                color: "#959393",
-                fontWeight: "bold",
-                border: "2px solid #959393",
-                backgroundColor: "transparent",
-                transition: "all 0.3s ease-in-out",
-                "&:hover": {
-                  borderColor: "#959393",
-                  boxShadow: "0 0 8px #959393, 0 0 6px #959393",
-                },
-              }}
-            >
-              Clear All Drafts
-            </Button>
           </Box>
 
           {/* Product Selection */}
@@ -1468,6 +1448,7 @@ export default function GstInvoice() {
                       "Discount %",
                       "Amount",
                       "Total (Incl. GST)",
+                      "Actions",
                     ].map((col) => (
                       <TableCell
                         key={col}
@@ -1797,7 +1778,7 @@ export default function GstInvoice() {
                             },
                           }}
                         >
-                          <ReplyAllOutlinedIcon
+                          <DeleteSweepIcon
                             sx={{ fontSize: "20px", color: primaryColor }}
                           />
                         </IconButton>
@@ -2486,13 +2467,13 @@ export default function GstInvoice() {
             </Box>
 
             <motion.div
-              initial={false}
-              animate={{
-                height: showCustomer ? "auto" : 0,
-                opacity: showCustomer ? 1 : 0,
-              }}
-              style={{ overflow: "hidden" }}
-              transition={{ duration: 0.5 }}
+              initial={false} // Keeps the height during first render stable
+  animate={{
+    height: showCustomer ? "auto" : 0,
+    opacity: showCustomer ? 1 : 0,
+  }}
+  style={{ overflow: "hidden" }}
+  transition={{ duration: 0.5 }}
             >
               <Grid
                 container
@@ -2543,11 +2524,6 @@ export default function GstInvoice() {
 
                     {/* Conditionally show Tooltip only when there's a value */}
                     {customer[key] ? (
-                      <Tooltip
-                        title={customer[key]}
-                        arrow
-                        placement="top-start"
-                      >
                         <TextField
                           fullWidth
                           required
@@ -2592,7 +2568,6 @@ export default function GstInvoice() {
                             }),
                           }}
                         />
-                      </Tooltip>
                     ) : (
                       // If no value, render without tooltip
                       <TextField
@@ -2698,6 +2673,7 @@ export default function GstInvoice() {
                     setSnackbarSeverity("info");
                     setSnackbarOpen(true);
                     setConfirmClearOpen(false);
+                    setDraftModalOpen(false);
                   }}
                   variant="outlined"
                   color="error"
@@ -2858,6 +2834,7 @@ export default function GstInvoice() {
         onClose={() => setDraftModalOpen(false)}
         onSelectDraft={handleSelectDraft}
         onDeleteDraft={handleDeleteSpecificDraft}
+        onClearDrafts={() => setConfirmClearOpen(true)} 
       />
     </>
   );

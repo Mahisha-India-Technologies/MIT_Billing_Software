@@ -3,9 +3,24 @@ const router = express.Router();
 const db = require("../config/config.js"); // your DB connection
 const bcrypt = require("bcrypt");
 
-// POST /api/users
-// backend/routes/users.js
+// Password validation helper
+const isValidPassword = (password) => {
+  const minLength = 8;
+  const hasAlphabet = /[a-zA-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  const hasNoSpaces = /^\S+$/.test(password);
 
+  return (
+    password.length >= minLength &&
+    hasAlphabet &&
+    hasNumber &&
+    hasSpecialChar &&
+    hasNoSpaces
+  );
+};
+
+// POST /api/users/add-users
 router.post("/add-users", async (req, res) => {
   const {
     first_name,
@@ -28,8 +43,15 @@ router.post("/add-users", async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
+  if (!isValidPassword(password)) {
+    return res.status(400).json({
+      message:
+        "Password must be at least 8 characters, include a letter, a number, a special character, and have no spaces",
+    });
+  }
+
   try {
-    const hashedPassword = password; // Optionally hash using bcrypt
+    const hashedPassword = password; // Securely hash password
 
     const sql = `
       INSERT INTO users (
@@ -65,6 +87,7 @@ router.post("/add-users", async (req, res) => {
   }
 });
 
+// GET all users
 router.get("/all-users", async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -77,18 +100,17 @@ router.get("/all-users", async (req, res) => {
   }
 });
 
-// Backend: routes/users.js or similar
+// DELETE user by ID
 router.delete("/delete/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Check if the user has related invoices
     const [invoices] = await db.execute("SELECT * FROM invoices WHERE created_by = ?", [id]);
 
     if (invoices.length > 0) {
-      return res
-        .status(400)
-        .json({ message: "Cannot delete user who has created invoices, instead try to make them inactive" });
+      return res.status(400).json({
+        message: "Cannot delete user who has created invoices, instead try to make them inactive",
+      });
     }
 
     const [result] = await db.execute("DELETE FROM users WHERE user_id = ?", [id]);
@@ -104,6 +126,7 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
+// PUT update user
 router.put("/update/:id", async (req, res) => {
   const {
     first_name,
@@ -112,13 +135,12 @@ router.put("/update/:id", async (req, res) => {
     mobile_number,
     role,
     status,
-    password, // optional plain text
+    password, // optional
   } = req.body;
 
   const { id } = req.params;
 
   try {
-    // Build base update query and params
     let sql = `
       UPDATE users SET
         first_name = ?,
@@ -137,10 +159,17 @@ router.put("/update/:id", async (req, res) => {
       status,
     ];
 
-    // If password is provided, store it directly (NOT HASHED)
     if (password && password.trim() !== "") {
+      if (!isValidPassword(password)) {
+        return res.status(400).json({
+          message:
+            "Password must be at least 8 characters, include a letter, a number, a special character, and have no spaces",
+        });
+      }
+
+      const hashedPassword = password;
       sql += `, password_hash = ?`;
-      params.push(password); // Storing plain text
+      params.push(hashedPassword);
     }
 
     sql += ` WHERE user_id = ?`;

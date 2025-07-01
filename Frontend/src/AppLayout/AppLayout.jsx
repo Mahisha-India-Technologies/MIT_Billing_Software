@@ -11,7 +11,6 @@ import Dashboard from "../pages/Dashboard/GSTReport";
 import AddUsers from "../pages/AddUsers/AddUsers";
 import LoginPage from "../components/Login/Login";
 import Loader from "../components/Loader/Loader";
-import CategoryMaster from "../pages/CategoryMaster/CategoryMaster";
 
 const AppLayout = () => {
   const [user, setUser] = useState(null);
@@ -136,8 +135,8 @@ const AppLayout = () => {
           marginLeft: `${marginLeft}px`,
           px: { xs: 1, sm: 2 },
           pb: 2,
-          display: "block",
-          overflow: "auto",
+          display: 'block',
+          overflow: 'auto',
         }}
       >
         <Routes>
@@ -183,15 +182,6 @@ const AppLayout = () => {
               <PrivateRoute
                 element={PartyMaster}
                 roles={["admin", "cashier", "customer"]}
-              />
-            }
-          />
-          <Route
-            path="/category-master"
-            element={
-              <PrivateRoute
-                element={CategoryMaster}
-                roles={["admin", "customer"]}
               />
             }
           />

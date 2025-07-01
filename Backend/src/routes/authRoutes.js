@@ -2,15 +2,18 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/config.js");
 const jwt = require("jsonwebtoken");
-const secretKey = "your-secret-key"; // ⚠️ In production, move to .env
+const bcrypt = require("bcrypt");
 
+const secretKey = "your-secret-key"; // ⚠️ Move this to .env in production
+
+// POST /api/auth/login
 router.post("/login", async (req, res) => {
-  const { first_name, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     const [rows] = await db.execute(
-      'SELECT * FROM users WHERE first_name = ? AND status = "active"',
-      [first_name]
+      'SELECT * FROM users WHERE BINARY email = ? AND status = "active"',
+      [email]
     );
 
     if (rows.length === 0) {
@@ -19,12 +22,11 @@ router.post("/login", async (req, res) => {
 
     const user = rows[0];
 
-    // Note: In production, use bcrypt.compare()
+    // ✅ Enforce case-sensitive password match
     if (password !== user.password_hash) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Create token valid for 22 hours
     const token = jwt.sign(
       {
         user_id: user.user_id,
@@ -32,10 +34,9 @@ router.post("/login", async (req, res) => {
         first_name: user.first_name,
       },
       secretKey,
-      { expiresIn: "22h" } // 🔒 Auto logout after 22 hours
+      { expiresIn: "22h" }
     );
 
-    // Decode token to get expiry (optional)
     const decoded = jwt.decode(token);
 
     res.json({
@@ -45,7 +46,7 @@ router.post("/login", async (req, res) => {
         user_id: user.user_id,
         username: user.first_name,
         role: user.role,
-        tokenExpiry: decoded.exp, // 👈 Send expiry to frontend (in seconds)
+        tokenExpiry: decoded.exp,
       },
     });
   } catch (err) {

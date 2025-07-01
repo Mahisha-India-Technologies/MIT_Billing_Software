@@ -34,6 +34,8 @@ import { Snackbar, Alert } from "@mui/material";
 import API_BASE_URL from "../../Context/Api.jsx";
 import CloseIcon from "@mui/icons-material/Close";
 import FlipCameraAndroidOutlinedIcon from "@mui/icons-material/FlipCameraAndroidOutlined";
+import AutoModeIcon from '@mui/icons-material/AutoMode';
+import CategoryModal from "./CategoryModal.jsx";
 
 const Products = () => {
   const theme = useTheme();
@@ -71,6 +73,7 @@ const Products = () => {
   const [viewMode, setViewMode] = useState("card"); //  card (or) table
 
   const [showTracedOnly, setShowTracedOnly] = useState(false);
+  const [openCategoryModal, setOpenCategoryModal] = useState(false);
 
   const handleChangePage = (event, newPage) => setPage(newPage);
 
@@ -329,7 +332,7 @@ const Products = () => {
           alignItems: "center",
           mb: 4,
           mt: {xs: 2, sm: 0},
-          flexWrap: { xs: "wrap", sm: "nowrap" },
+          flexWrap: { xs: "wrap", sm: "wrap", md: "nowrap" },
           gap: { xs: 2, sm: 0 },
         }}
       >
@@ -346,9 +349,9 @@ const Products = () => {
         <Box
           sx={{
             display: "flex",
-            gap: "10px",
+            gap: {xs: '0px', sm: '10px'},
             flexDirection: "row",
-            "@media (max-width:400px)": {
+            "@media (max-width:600px)": {
               flexDirection: "column",
               width: "100%",
             },
@@ -386,6 +389,33 @@ const Products = () => {
 
           {!showTracedOnly ? (
             <Button
+              startIcon={<AutoModeIcon />}
+              onClick={() => setOpenCategoryModal(true)}
+              sx={{
+                bgcolor: "transparent",
+                mt: "10px",
+                color: primaryColor,
+                border: `1px solid ${primaryColor}`,
+                px: 2,
+                py: 1,
+                borderRadius: 3,
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                textTransform: "none",
+                "&:hover": {
+                  boxShadow: `0 0 8px ${primaryColor}, 0 0 6px ${primaryColor}`,
+                },
+              }}
+            >
+              Update Category
+            </Button>
+          ) : (
+            ""
+          )}
+
+          {!showTracedOnly ? (
+            <Button
               startIcon={<AddBoxIcon />}
               onClick={handleAddProduct}
               sx={{
@@ -402,9 +432,6 @@ const Products = () => {
                 textTransform: "none",
                 "&:hover": {
                   boxShadow: `0 0 8px ${primaryColor}, 0 0 6px ${primaryColor}`,
-                  filter: "brightness(1.1)",
-                  transform: "scale(1.05)",
-                  transition: "all 0.3s ease",
                 },
               }}
             >
@@ -903,6 +930,8 @@ const Products = () => {
         initialData={currentProduct}
         categories={categories}
       />
+
+      <CategoryModal open={openCategoryModal} onClose={() => setOpenCategoryModal(false)} />
 
       {/* ✅ Delete Confirmation Modal */}
       {/* ✅ Delete Confirmation Modal */}

@@ -24,37 +24,35 @@ const LoginPage = ({ onLogin }) => {
   const navigate = useNavigate();
   const primaryColor = theme.palette.primary.main;
 
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
-  // Refs for input focus
   const passwordRef = useRef();
 
   const handleLogin = async () => {
     setError("");
-    if (!username || !password) {
+    if (!email || !password) {
       return setError("Please fill in all fields");
     }
 
     try {
       const res = await axios.post(`${API_BASE_URL}/api/auth/login`, {
-        first_name: username,
+        email,
         password,
       });
 
       const { user, token } = res.data;
-      const expirySeconds = res.data.user.tokenExpiry; // From backend
-      const expiryMs = expirySeconds * 1000; // Convert to milliseconds
+      const expirySeconds = user.tokenExpiry;
+      const expiryMs = expirySeconds * 1000;
 
       localStorage.setItem("authToken", token);
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("tokenExpiry", expiryMs.toString()); // Save expiry for auto-logout
+      localStorage.setItem("tokenExpiry", expiryMs.toString());
 
       onLogin(user, token);
     } catch (err) {
-      setError("Invalid username or password");
+      setError("Invalid email or password");
     }
   };
 
@@ -86,7 +84,6 @@ const LoginPage = ({ onLogin }) => {
           border: `1px solid ${isDark ? "#00bcd4" : "#cfd8dc"}`,
         }}
       >
-        {/* Logo */}
         <Box display="flex" justifyContent="center" mb={2}>
           <img
             src={logo}
@@ -98,7 +95,6 @@ const LoginPage = ({ onLogin }) => {
           />
         </Box>
 
-        {/* Title */}
         <Typography
           variant="h4"
           align="center"
@@ -116,7 +112,7 @@ const LoginPage = ({ onLogin }) => {
           gutterBottom
           sx={{ color: isDark ? "#aaa" : "#333" }}
         >
-          Username{" "}
+          Email{" "}
           <Typography component="span" color="error">
             *
           </Typography>
@@ -124,9 +120,10 @@ const LoginPage = ({ onLogin }) => {
         <TextField
           fullWidth
           required
-          placeholder="Enter the Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter your email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           margin="dense"
           variant="outlined"
           onKeyDown={(e) => {
@@ -135,7 +132,6 @@ const LoginPage = ({ onLogin }) => {
               passwordRef.current?.focus();
             }
           }}
-          InputLabelProps={{ shrink: true }}
           sx={{
             mb: 2,
             "& .MuiOutlinedInput-root": {
@@ -158,20 +154,19 @@ const LoginPage = ({ onLogin }) => {
         <TextField
           fullWidth
           required
-          placeholder="Enter the Password"
+          placeholder="Enter your password"
           type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          inputRef={passwordRef}
           margin="dense"
           variant="outlined"
-          inputRef={passwordRef}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
               handleLogin();
             }
           }}
-          InputLabelProps={{ shrink: true }}
           sx={{
             mb: 2,
             "& .MuiOutlinedInput-root": {
