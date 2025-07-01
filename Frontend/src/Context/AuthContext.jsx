@@ -1,52 +1,74 @@
 // src/contexts/AuthContext.js
 import { createContext, useContext, useState, useEffect } from "react";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ loading state
+  let logoutTimer = null;
 
-  // Check token and expiry on mount
+  // ⏱ Auto logout helper
+  const setupAutoLogout = (token) => {
+    try {
+const decoded = jwtDecode(token);
+      const currentTime = Date.now() / 1000; // seconds
+
+      if (decoded.exp < currentTime) {
+        handleLogout();
+      } else {
+        const timeUntilExpiry = (decoded.exp - currentTime) * 1000;
+        logoutTimer = setTimeout(() => {
+          handleLogout();
+        }, timeUntilExpiry);
+      }
+    } catch (error) {
+      console.error("Token decode failed:", error);
+      handleLogout();
+    }
+  };
+
+  // ✅ On mount, check localStorage for auth
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     const userData = localStorage.getItem("user");
 
     if (token && userData) {
-      try {
-        const decoded = jwt_decode(token);
-        const currentTime = Date.now() / 1000; // in seconds
-
-        if (decoded.exp < currentTime) {
-          // Token expired
-          handleLogout();
-        } else {
-          setUser(JSON.parse(userData));
-
-          // ⏱ Set timeout to auto logout when token expires
-          const timeUntilExpiry = (decoded.exp - currentTime) * 1000;
-          const timer = setTimeout(() => {
-            handleLogout();
-          }, timeUntilExpiry);
-
-          return () => clearTimeout(timer); // cleanup
-        }
-      } catch (error) {
-        console.error("Token decode error:", error);
-        handleLogout();
-      }
+      setUser(JSON.parse(userData));
+      setupAutoLogout(token);
     }
+
+    setLoading(false); // ✅ done loading
+    return () => {
+      if (logoutTimer) clearTimeout(logoutTimer);
+    };
   }, []);
+
+  const handleLogin = (userData, token) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("authToken", token);
+    setUser(userData);
+    setupAutoLogout(token);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");
     setUser(null);
-    window.location.reload(); // or redirect to login
+    window.location.href = "/login"; // full reload to clear state
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout: handleLogout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        loading,
+        login: handleLogin,
+        logout: handleLogout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

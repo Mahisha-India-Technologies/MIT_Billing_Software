@@ -1,21 +1,23 @@
+// src/layouts/ProtectedRoute.jsx
 import React from "react";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
-const ProtectedRoute = ({ isAuthenticated, user, allowedRoles, children }) => {
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
+const ProtectedRoute = ({ allowedRoles, children }) => {
+  const { user, isAuthenticated, loading } = useAuth();
+
+  if (loading) return null; // or a spinner
+
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   if (!allowedRoles.includes(user?.role)) {
-    // Redirect unauthorized users to their default page
-    const fallbackPath =
+    const fallback =
       user?.role === "admin"
         ? "/"
         : user?.role === "cashier"
         ? "/gst-invoice"
         : "/gst-invoice";
-
-    return <Navigate to={fallbackPath} replace />;
+    return <Navigate to={fallback} replace />;
   }
 
   return children;
