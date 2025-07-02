@@ -1365,59 +1365,6 @@ export default function GstInvoice() {
                 </Paper>
               ))}
 
-              {/* Add Product Button (Mobile) */}
-              <Box
-                textAlign="center"
-                mt={2}
-                sx={{ display: "grid", gap: "10px" }}
-              >
-                <Button
-                  display="flex"
-                  gap={2}
-                  mb={2}
-                  onClick={addProductRow}
-                  sx={{
-                    textTransform: "none",
-                    gap: "8px",
-                    color: primaryColor,
-                    border: `1px solid ${primaryColor}`,
-                    borderRadius: "10px",
-                    backgroundColor: "transparent",
-                    transition: "all 0.3s ease-in-out",
-                    "&:hover": {
-                      borderColor: primaryColor,
-                      boxShadow: `0 0 8px ${primaryColor}, 0 0 6px ${primaryColor}`,
-                    },
-                  }}
-                >
-                  <AddLinkOutlinedIcon sx={{ fontSize: "24px" }} />
-                  <Typography>Add Products</Typography>
-                </Button>
-
-                <Button
-                  display="flex"
-                  gap={2}
-                  mb={2}
-                  onClick={() => setSelectModalOpen(true)}
-                  sx={{
-                    gap: "8px",
-                    textTransform: "none",
-                    color: primaryColor,
-                    border: `1px solid ${primaryColor}`,
-                    borderRadius: "10px",
-                    backgroundColor: "transparent",
-                    transition: "all 0.3s ease-in-out",
-                    "&:hover": {
-                      borderColor: "#00acc1",
-                      boxShadow: `0 0 8px ${primaryColor}, 0 0 6px ${primaryColor}`,
-                    },
-                  }}
-                >
-                  <PublishedWithChangesOutlinedIcon sx={{ fontSize: "20px" }} />
-                  <Typography>Select Products</Typography>
-                </Button>
-              </Box>
-
               {notification && (
                 <Typography color="error" fontWeight="bold" mt={2}>
                   {notification}
@@ -1436,7 +1383,7 @@ export default function GstInvoice() {
                   mt: 2,
                 }}
               >
-                <Table size="small" sx={{ minWidth: "1000px" }}>
+                <Table size="small" sx={{ minWidth: "1100px" }}>
                   <TableHead>
                     <TableRow
                       sx={{ backgroundColor: palette.background.default }}
@@ -1805,7 +1752,7 @@ export default function GstInvoice() {
                   </TableBody>
                 </Table>
               </Box>
-              <Grid sx={{ displlay: "flex", gap: "10px", p: 1, mt: 3 }}>
+              <Grid sx={{ display: "flex", gap: "10px", p: 1, mt: 3, flexDirection: {xs: 'column', sm: 'row'},  }}>
                 <Button
                   display="flex"
                   gap={2}
@@ -1835,7 +1782,6 @@ export default function GstInvoice() {
                   mb={2}
                   onClick={() => setSelectModalOpen(true)}
                   sx={{
-                    ml: "10px",
                     gap: "8px",
                     textTransform: "none",
                     color: primaryColor,
