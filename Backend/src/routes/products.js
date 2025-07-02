@@ -41,11 +41,10 @@ router.use((req, res, next) => {
 router.post("/upload", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No image uploaded" });
-
-    const backendDomain = "https://your-backend-domain.com";
   }
-
+  const backendDomain = "https://mit-billing-software.onrender.com";
   const imagePath = `${backendDomain}/images/products/${req.file.filename}`;
+
   // const imagePath = `images/products/${req.file.filename}`;
   res.status(200).json({ imagePath });
 });
